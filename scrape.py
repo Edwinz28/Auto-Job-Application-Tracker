@@ -7,6 +7,8 @@ from datetime import datetime
 #Pandas xlsxwriter
 import pandas as pd
 import sys
+#constants
+import constants
 
 #Declare data structures
 date = list()
@@ -14,15 +16,42 @@ title = list()
 company = list()
 url = list()
 
+def find_data(page_soup, title_tag, title_class, company_tag, company_class):
+    find_company = str()
+    find_title = str()
+    try:
+        find_title = page_soup.find(title_tag, class_= title_class).text
+        title.append(find_title)                  
+    except:
+        print("Job title not found")
+    try:
+        find_company = page_soup.find(company_tag, class_= company_class).text
+        company.append(find_company)
+    except:
+        print("Company info not found")
+    
+    return find_title and find_company
+
 def scrape():
     #Loads urls
-    print("Scraping data...")
+    print("Running Auto Job Application Tracker")
+    print("Attempting to open insert.txt")
     try:
         new_applications = open("Insert.txt", "r")
         urls = new_applications.read().splitlines()
         new_applications.close()
 
-        for job_url in urls:
+        total = len(urls)
+        if total == 0:
+            print("Insert.txt is empty, please make sure you save the file before running this script.")
+            print("Exiting script...")
+            sys.exit(1)
+        else:
+            print("Found {} Urls, proceeding to scrape data".format(total))
+
+        for num, job_url in enumerate(urls, 1):
+            print("--------------------------------")
+            print("Parsing application {}/{}".format(num, total))
             try:
                 #Open connection to job url
                 uClient = uReq(job_url)
@@ -40,19 +69,18 @@ def scrape():
             date.append(str(datetime.date(datetime.now())))
             url.append(job_url)
 
-            try:
-                find_title = page_soup.find("h3", class_= "jobsearch-JobInfoHeader-title").text
-                title.append(find_title)                  
-            except:
-                print("Job title not found")
+            #For now, we try each site until we find values
+
+            #Try indeed
+            if find_data(page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, 
+                        constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS):
+                print("Success!")
+                continue
+            else:
+                print("Data not found, please enter them manually")
                 title.append("N/A")
-            try:
-                find_company = page_soup.find("div", class_= "icl-u-lg-mr--sm icl-u-xs-mr--xs").text
-                company.append(find_company)
-            except:
-                print("Company info not found")
                 company.append("N/A")
-            
+
     except FileNotFoundError:
         print("File does not exist, creating that file now...")
         print("Please copy your URLs into 'insert.txt'")
