@@ -23,12 +23,12 @@ def find_data(page_soup, title_tag, title_class, company_tag, company_class):
         find_title = page_soup.find(title_tag, class_= title_class).text
         title.append(find_title)                  
     except:
-        print("Job title not found")
+        pass
     try:
         find_company = page_soup.find(company_tag, class_= company_class).text
         company.append(find_company)
     except:
-        print("Company info not found")
+        pass
     
     return find_title and find_company
 
@@ -71,9 +71,14 @@ def scrape():
 
             #For now, we try each site until we find values
 
-            #Try indeed
+            #Try Indeed
             if find_data(page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, 
                         constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS):
+                print("Success!")
+                continue
+            #Try GlassDoor
+            elif find_data(page_soup, constants.LINKEDIN_TITLE_TAG, constants.LINKEDIN_TITLE_CLASS,
+                            constants.LINKEDIN_COMPANY_TAG, constants.LINKEDIN_COMPANY_CLASS):
                 print("Success!")
                 continue
             else:
