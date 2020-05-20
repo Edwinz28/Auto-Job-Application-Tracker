@@ -16,7 +16,7 @@ title = list()
 company = list()
 url = list()
 
-def find_data(page_soup, title_tag, title_class, company_tag, company_class):
+def find_data(page_soup, title_tag, title_class, company_tag=None, company_class=None):
     find_company = str()
     find_title = str()
     try:
@@ -31,6 +31,16 @@ def find_data(page_soup, title_tag, title_class, company_tag, company_class):
         pass
     
     return find_title and find_company
+
+def split_title(page_soup, title_tag, title_class, key_word):
+    print("Splitting")
+    find_job = str()
+    find_company = str()
+    find_title = page_soup.find(title_tag, class_= title_class).text
+
+    print("foo")
+    return find_job and find_company
+
 
 def scrape():
     #Loads urls
@@ -73,16 +83,23 @@ def scrape():
 
             #Try Indeed
             if find_data(page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, 
-                        constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS):
-                print("Success!")
+                            constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS):
                 continue
-            #Try GlassDoor
+            #Try Linkedin
             elif find_data(page_soup, constants.LINKEDIN_TITLE_TAG, constants.LINKEDIN_TITLE_CLASS,
                             constants.LINKEDIN_COMPANY_TAG, constants.LINKEDIN_COMPANY_CLASS):
-                print("Success!")
                 continue
+            #Try Workopolis
+            elif find_data(page_soup, constants.WORKOPOLIS_TITLE_TAG, constants.WORKOPOLIS_TITLE_CLASS,
+                            constants.WORKOPOLIS_COMPANY_TAG, constants.WORKOPOLIS_COMPANY_CLASS):
+                continue
+            #Try Eluta
+            elif find_data(page_soup, constants.ELUTA_TITLE_TAG, constants.ELUTA_TITLE_CLASS,
+                            constants.ELUTA_COMPANY_TAG, constants.ELUTA_COMPANY_CLASS):
+                continue
+            #Didnt find data
             else:
-                print("Data not found, please enter them manually")
+                print("Some data not found, please enter them manually")
                 title.append("N/A")
                 company.append("N/A")
 
