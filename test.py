@@ -1,3 +1,7 @@
-foo = "Softare intern at the university of toronto" 
-t = foo.split("at")
-print(t)
+def foo(w):
+    w = "Hi"
+
+
+s = "hello"
+foo(s)
+print(s)

@@ -27,8 +27,8 @@ WORKOPOLIS_COMPANY_TAG = "div"
 
 
 #Monster
-MONSTER_INFO_CLASS = "mux-card mux-job-header"
-MONSTER_INFO_TAG = "div"
+MONSTER_INFO_CLASS = "title"
+MONSTER_INFO_TAG = "h1"
 MONSTER_KEYWORD = "at"
 
 #Eluta
@@ -36,3 +36,7 @@ ELUTA_TITLE_CLASS = "job-title"
 ELUTA_TITLE_TAG = "h1"
 ELUTA_COMPANY_CLASS = "employer-name"
 ELUTA_COMPANY_TAG = "h5"
+
+#Workday
+WD3_TITLE_CLASS = "GWTCKEditor-Disabled"
+WD3_TITLE_TAG = "h1"
