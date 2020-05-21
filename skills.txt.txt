@@ -1,8 +1,0 @@
-Python
-HTML
-CSS
-JavaScript
-Java
-C++
-Objective C
- C
