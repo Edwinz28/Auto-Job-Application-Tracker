@@ -10,7 +10,7 @@ Ruby
 Verilog
 GIT
 PHP
-SQL
+MySQL
 Swift
 MATLAB
 Kotlin
@@ -20,3 +20,10 @@ Bootstrap
 JQuery
 Eclipse
 VSCode
+ReactJS
+Ajax
+AngularJS
+AWS
+Azure
+Kubernetes
+MongoDB

@@ -7,6 +7,11 @@ import constants
 
 def add_new():
     print("Appending to excel spread sheet...")
+    append_dates = data.date
+    append_titles = data.title
+    append_company = data.company
+    append_url = data.url
+    append_skills = data.skills
     try:
         #Appends new data with old
         prev_df = pd.read_excel('Applications.xlsx')

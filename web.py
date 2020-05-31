@@ -12,58 +12,63 @@ import sys
 import constants
 import data
 
-def find_data(page_soup, title_tag=None, title_class=None, company_tag=None, company_class=None):
-    '''
-    Find general data about the posting: Job Title, Company
+class Posting:
 
-    Parameters:
-        page_soup = BS4 of webpage
-        title_tag = HTML tag of the job title
-        title_class = HTML class of the job title
-        company_tag = HTML tag of the company
-        company_class = HTML class of the company
-    
-    Returns:
-        Returns a boolean if the scraping was successful
-    '''
-    find_title = str()
-    find_company = str()
-    try:
-        find_title = page_soup.find(title_tag, class_= title_class).text   
-        data.title.append(find_title)              
-    except:
-        pass
-    try:
-        find_company = page_soup.find(company_tag, class_= company_class).text
-        data.company.append(find_company)
-    except:
-        pass
-    
-    return find_title or find_company
+    company = str()
+    title = str()
+    skills = str()
 
-def find_skills(page_soup):
-    '''
-    Scrapes web page for skills
+    def __init__(self, site_type, page_soup, title_tag, title_class, company_tag, company_class):
+        self.type = site_type
+        self.page = page_soup
+        self.title_tag = title_tag
+        self.title_class = title_class
+        self.company_tag = company_tag
+        self.company_class = company_class
 
-    Parameters: 
-        page_soup = BS4 of webpage
-    
-    Returns:
-        None
-    '''
-    try:
-        f = open("Skills_List.txt", "r")
-        skills_list = f.read().splitlines()
-        f.close()
-        page_txt = page_soup.text.lower()
-        temp = ""
-        for x in skills_list:
-            if x.lower() in page_txt:
-                temp = temp + x + " "
+    def find_data(self):
+        '''
+        Find general data about the posting: Job Title, Company
 
-        data.skills.append(temp)
-    except FileNotFoundError:
-        print("Skills_List.txt not found, please make a txt file with a list of skills you want to scrape")
+        Parameters:
+            None
+        Returns:
+            None
+        '''
+        #Tries to scrape the job title
+        try:
+            self.title = self.page.find(self.title_tag, class_= self.title_class).text                
+        except:
+            self.title = "Not found"
+
+        #Tries to scrape the job company
+        try:
+            self.company = self.page.find(self.company_tag, class_= self.company_class).text
+        except:
+            self.company = "Not found"
+
+    def find_skills(self):
+        '''
+        Scrapes web page for skills
+
+        Parameters: 
+            None
+        
+        Returns:
+            None
+        '''
+        try:
+            f = open("Skills_List.txt", "r")
+            skills_list = f.read().splitlines()
+            f.close()
+            page_txt = self.page.text.lower()
+
+            for x in skills_list:
+                if x.lower() in page_txt:
+                    self.skills = self.skills + x + " "
+
+        except FileNotFoundError:
+            print("Skills_List.txt not found, please make a txt file with a list of skills you want to scrape")
 
 
 def scrape():
@@ -112,43 +117,22 @@ def scrape():
             data.date.append(str(datetime.date(datetime.now())))
             data.url.append(job_url)
 
-            #For now, we try each site until we find values
-            #Try Indeed
-            if find_data(page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, 
-                            constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS):
-                pass
-            #Try Linkedin
-            elif find_data(page_soup, constants.LINKEDIN_TITLE_TAG, constants.LINKEDIN_TITLE_CLASS,
-                            constants.LINKEDIN_COMPANY_TAG, constants.LINKEDIN_COMPANY_CLASS):
-                pass
-            #Try Workopolis
-            elif find_data(page_soup, constants.WORKOPOLIS_TITLE_TAG, constants.WORKOPOLIS_TITLE_CLASS,
-                            constants.WORKOPOLIS_COMPANY_TAG, constants.WORKOPOLIS_COMPANY_CLASS):
-                pass
-            #Try Eluta
-            elif find_data(page_soup, constants.ELUTA_TITLE_TAG, constants.ELUTA_TITLE_CLASS,
-                            constants.ELUTA_COMPANY_TAG, constants.ELUTA_COMPANY_CLASS):
-                pass
-            #Try WD3
-            #elif find_data(page_soup, constants.WD3_TITLE_TAG, constants.WD3_TITLE_CLASS):
-                #pass
-            #Try Monster
-            #elif split_title(page_soup, constants.MONSTER_INFO_TAG, constants.MONSTER_INFO_CLASS, constants.MONSTER_KEYWORD):
-                #pass
-            #Didnt find data
+            if "indeed" in job_url:
+                ad = Posting("INDEED", page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS)
+                ad.find_data()
+                ad.find_skills()
+                data.title.append(ad.title)
+                data.skills.append(ad.skills)
+                data.company.append(ad.company)
+            elif "linkedin" in job_url:
+                ad = Posting("LINKEDIN", page_soup, constants.LINKEDIN_TITLE_TAG, constants.LINKEDIN_TITLE_CLASS, constants.LINKEDIN_COMPANY_TAG, constants.LINKEDIN_COMPANY_CLASS)
+                ad.find_data()
+                ad.find_skills()
+                data.title.append(ad.title)
+                data.skills.append(ad.skills)
+                data.company.append(ad.company)
             else:
-                print("Some data not found, please enter them manually")
-                data.title.append("Not found")
-                data.company.append("Not found")
-
-            
-            #Compare dataframe sizes
-            if len(data.title) < len(data.url):
-                data.title.append("Not found")
-            elif len(data.company) < len(data.url):
-                data.company.append("Not found")
-
-            find_skills(page_soup)
+                print("URL not supported")
 
     except FileNotFoundError:
         print("File does not exist, creating that file now...")
