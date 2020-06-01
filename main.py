@@ -4,7 +4,7 @@ import excel
 def main():
     #Main
     web.scrape()
-    excel.add_new()
+    excel.create()
     print("Script completed. Good luck job hunting!")
     
 
