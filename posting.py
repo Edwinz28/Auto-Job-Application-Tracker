@@ -16,8 +16,9 @@ class Posting:
     company = str()
     title = str()
     skills = str()
+    location = str()
 
-    def __init__(self, site_type, url, page_soup, title_tag, title_class, company_tag, company_class):
+    def __init__(self, site_type, url, page_soup, title_tag, title_class, company_tag, company_class, loc_tag, loc_class):
         self.type = site_type
         self.url = url
         self.page = page_soup
@@ -25,10 +26,12 @@ class Posting:
         self.title_class = title_class
         self.company_tag = company_tag
         self.company_class = company_class
+        self.loc_tag = loc_tag
+        self.loc_class = loc_class
 
     def find_data(self):
         '''
-        Find general data about the posting: Job Title, Company
+        Find general data about the posting: Job Title, Company, Location
 
         Parameters:
             None
@@ -46,6 +49,12 @@ class Posting:
             self.company = self.page.find(self.company_tag, class_= self.company_class).text
         except:
             self.company = "Not found"
+
+        #Tries to scrape job location
+        try:
+            self.location = self.page.find(self.loc_tag, class_ = self.loc_class).text
+        except:
+            self.location = "Not found"
 
     def find_skills(self):
         '''
@@ -84,4 +93,6 @@ class Posting:
         data.skills.append(self.skills)
         data.company.append(self.company)
         data.url.append(self.url)
+        data.location.append(self.location)
         data.date.append(str(datetime.date(datetime.now())))
+

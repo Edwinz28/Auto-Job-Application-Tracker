@@ -57,9 +57,13 @@ def scrape():
 
             #Creates appropriate posting object 
             if "indeed" in job_url:
-                ad = Posting("INDEED", job_url, page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS)
+                ad = Posting("INDEED", job_url, page_soup, constants.INDEED_TITLE_TAG, constants.INDEED_TITLE_CLASS, constants.INDEED_COMPANY_TAG, constants.INDEED_COMPANY_CLASS, constants.INDEED_LOC_TAG, constants.INDEED_LOC_CLASS)
             elif "linkedin" in job_url:
-                ad = Posting("LINKEDIN", job_url, page_soup, constants.LINKEDIN_TITLE_TAG, constants.LINKEDIN_TITLE_CLASS, constants.LINKEDIN_COMPANY_TAG, constants.LINKEDIN_COMPANY_CLASS)
+                ad = Posting("LINKEDIN", job_url, page_soup, constants.LINKEDIN_TITLE_TAG, constants.LINKEDIN_TITLE_CLASS, constants.LINKEDIN_COMPANY_TAG, constants.LINKEDIN_COMPANY_CLASS, constants.LINKEDIN_LOC_TAG, constants.LINKEDIN_LOC_CLASS)
+            elif "workopolis" in job_url:
+                ad = Posting("WORKOPOLIS", job_url, page_soup, constants.WORKOPOLIS_TITLE_TAG, constants.WORKOPOLIS_TITLE_CLASS, constants.WORKOPOLIS_COMPANY_TAG, constants.WORKOPOLIS_COMPANY_CLASS, constants.WORKOPOLIS_LOC_TAG, constants.WORKOPOLIS_LOC_CLASS)
+            elif "glassdoor" in job_url:
+                ad = Posting("GLASSDOOR", job_url, page_soup, constants.GLASSDOOR_TITLE_TAG, constants.GLASSDOOR_TITLE_CLASS, constants.GLASSDOOR_COMPANY_TAG, constants.GLASSDOOR_COMPANY_CLASS, constants.GLASSDOOR_LOC_TAG, constants.GLASSDOOR_LOC_CLASS)
             else:
                 print("URL not supported")
                 continue

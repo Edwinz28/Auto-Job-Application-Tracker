@@ -27,3 +27,16 @@ AWS
 Azure
 Kubernetes
 MongoDB
+MVC
+MVP
+MVVM
+REST
+JAX-RS
+XML-RPC
+JSON-RPC
+SOAP
+JDBC
+MKS
+FuelCMS
+CodeIgniter
+NodeJS

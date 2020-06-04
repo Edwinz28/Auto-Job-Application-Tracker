@@ -1,10 +1,13 @@
 import web
-import excel
+from excel import Excel
 
 def main():
     #Main
     web.scrape()
-    excel.create()
+    
+    xlsx = Excel()
+
+    xlsx.create()
     print("Script completed. Good luck job hunting!")
     
 
