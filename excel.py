@@ -6,10 +6,30 @@ import data
 import constants
 
 class Excel:
+    #Cell properties
     firstCell = 'C1'
     largestCol = "F"
+
+    #Dataframe data structures
+    dfDates = list()
+    dfTitles = list()
+    dfCompany = list()
+    dfLocation = list()
+    dfSkills = list()
+    dfUrls = list()
+
     def __init__(self):
-        pass
+        #Loads previous data in excel into dataframe
+        try:
+            df_old = pd.read_excel('Applications.xlsx')
+            self.dfDates = df_old['Date'].tolist()
+            self.dfTitles = df_old['Job Title'].tolist()
+            self.dfCompany = df_old['Company'].tolist()
+            self.dfUrls = df_old['Url'].tolist()
+            self.dfSkills = df_old['Skills'].tolist()
+            self.dfLocation = df_old['Location'].tolist()
+        except:
+            print("No previous data found")
     
     def get_last_row(self, df)-> int:
         '''
@@ -24,43 +44,52 @@ class Excel:
         return int(df.size / 6) + 1
     
     def get_df_range(self, df)->str:
+        '''
+        Gets dataframe range in the form of A1:F1
+
+        Parameters:
+            df: The dataframe to analyze
+
+        Returns:
+            Str: a string of the dataframe range
+        '''
         return self.firstCell + ':' + self.largestCol + str(self.get_last_row(df))
+    
+    def append_df_elements(self)-> None:
+        '''
+        Appends old data points in dataframe with new points. This function updates data structures in Excel class
+
+        Parameters:
+            None
+        
+        Returns:
+            None
+
+        '''
+
+        self.dfDates += data.date
+        self.dfTitles += data.title
+        self.dfCompany += data.company
+        self.dfLocation += data.location
+        self.dfSkills += data.skills
+        self.dfUrls += data.url
 
     def create(self)-> None:
-        print("Appending to excel spread sheet...")
-        try:
-            #Appends new data with old
-            prev_df = pd.read_excel('Applications.xlsx')       
-        except:
-            print("Application.xlsx not found, no data to append.")
-            print("Creating Application.xlsx and continuing with inserting data...")
-            append_dates = data.date
-            append_titles = data.title
-            append_company = data.company
-            append_url = data.url
-            append_skills = data.skills    
-            append_location = data.location
+        '''
+        Main driving function to create the excel spreadsheet
 
+        Parameters:
+            None
+        
+        Returns:
+            None
+        '''
+        print("Writing to Application.xlsx")
 
-        else:   
-            prev_dates = prev_df['Date'].tolist()
-            prev_titles = prev_df['Job Title'].tolist()
-            prev_company = prev_df['Company'].tolist()
-            prev_url = prev_df['Url'].tolist()
-            prev_skills = prev_df['Skills'].tolist()
-            prev_location = prev_df['Location'].tolist()
-
-            append_dates = prev_dates + data.date
-            append_titles = prev_titles + data.title
-            append_company = prev_company + data.company
-            append_url = prev_url + data.url
-            append_skills = prev_skills + data.skills 
-            append_location = prev_location + data.location
-
-    
+        self.append_df_elements()
 
         #Writes to excel
-        df = pd.DataFrame({'Date': append_dates, 'Job Title': append_titles, 'Company': append_company, 'Location':append_location, 'Skills':append_skills, 'Url': append_url})
+        df = pd.DataFrame({'Date': self.dfDates, 'Job Title': self.dfTitles, 'Company': self.dfCompany, 'Location': self.dfLocation, 'Skills':self.dfSkills, 'Url': self.dfUrls})
         df.index += 1    
 
         writer = pd.ExcelWriter("Applications.xlsx", engine='xlsxwriter')

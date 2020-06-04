@@ -29,7 +29,7 @@ class Posting:
         self.loc_tag = loc_tag
         self.loc_class = loc_class
 
-    def find_data(self):
+    def find_data(self)-> None:
         '''
         Find general data about the posting: Job Title, Company, Location
 
@@ -56,7 +56,7 @@ class Posting:
         except:
             self.location = "Not found"
 
-    def find_skills(self):
+    def find_skills(self)-> None:
         '''
         Scrapes web page for skills
 
@@ -75,19 +75,22 @@ class Posting:
             for x in skills_list:
                 if x.lower() in page_txt:
                     self.skills = self.skills + x + " "
+            
+            if not self.skills:
+                self.skills = "Not found"
 
         except FileNotFoundError:
             print("Skills_List.txt not found, please make a txt file with a list of skills you want to scrape")
     
-    def append(self):
+    def append(self)-> None:
         '''
-        Appends scrapped data to dataframes
+        Appends scrapped data to global lists
 
         Parameters:
             None
         
         Returns:
-            Updates global lists
+            None
         '''
         data.title.append(self.title)
         data.skills.append(self.skills)
