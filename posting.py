@@ -18,7 +18,7 @@ class Posting:
     skills = str()
     location = str()
 
-    def __init__(self, site_type, url, page_soup, title_tag, title_class, company_tag, company_class, loc_tag, loc_class):
+    def __init__(self, site_type=None, url=None, page_soup=None, title_tag=None, title_class=None, company_tag=None, company_class=None, loc_tag=None, loc_class=None):
         self.type = site_type
         self.url = url
         self.page = page_soup
@@ -82,6 +82,20 @@ class Posting:
         except FileNotFoundError:
             print("Skills_List.txt not found, please make a txt file with a list of skills you want to scrape")
     
+    def get_hyperlink(self, link, short)-> str:
+        '''
+        Converts url to excel hyperlink equation
+
+        Parameter:
+            Link: The url to be converted
+            Short: The short form replacement text
+
+        Returns:
+            Excel hyperlink equation in string form
+        '''
+        #return '=HYPERLINK("{}", "{}")'.format(link, short)
+        return '<a href="{}">{}</a>'.format(link,short)
+
     def append(self)-> None:
         '''
         Appends scrapped data to global lists
@@ -98,4 +112,22 @@ class Posting:
         data.url.append(self.url)
         data.location.append(self.location)
         data.date.append(str(datetime.date(datetime.now())))
+    
+    def set_empty(self)->None:
+        '''
+        Sets data components to "Not found" for a Posting object with an invalid URL
+
+        Parameters:
+            None
+        
+        Returns:
+            None
+        '''
+
+        self.title = "Not found"
+        self.company = "Not found"
+        self.location = "Not found"
+
+
+
 

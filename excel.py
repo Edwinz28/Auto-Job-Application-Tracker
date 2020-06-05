@@ -55,6 +55,39 @@ class Excel:
         '''
         return self.firstCell + ':' + self.largestCol + str(self.get_last_row(df))
     
+    def format(self, workbook, worksheet, df, smWidth, width, lgWidth, headerCol, highlightCol )->None:
+        '''
+        Formats excel to present the information in an organized manner
+
+        Parameters:
+            Workbook: xlsx workbook
+            Worksheet: xlsx worksheet
+            df: working dataframe
+            smWidth: width of normal cols
+            lgWidgth: width of larger columns
+            headerCol: color of header
+            highlightCol: cell highlight color
+        
+        Returns:
+            None
+        '''
+                
+        #header format
+        header_format = workbook.add_format({'bg_color':headerCol,'bold':True, 'border':1})
+
+        #Column format
+        worksheet.set_column('B:B', smWidth)
+        worksheet.set_column('C:E', width)
+        worksheet.set_column('F:G', lgWidth)
+    
+        format1 = workbook.add_format({'bg_color':highlightCol})
+        worksheet.conditional_format(self.get_df_range(df), {'type': 'text',
+                                        'criteria': 'containing',
+                                        'value':     'Not found',
+                                        'format': format1})
+        for col, info in enumerate(df.columns.values):
+            worksheet.write(0, col +1, info, header_format)
+    
     def append_df_elements(self)-> None:
         '''
         Appends old data points in dataframe with new points. This function updates data structures in Excel class
@@ -66,7 +99,6 @@ class Excel:
             None
 
         '''
-
         self.dfDates += data.date
         self.dfTitles += data.title
         self.dfCompany += data.company
@@ -90,7 +122,7 @@ class Excel:
 
         #Writes to excel
         df = pd.DataFrame({'Date': self.dfDates, 'Job Title': self.dfTitles, 'Company': self.dfCompany, 'Location': self.dfLocation, 'Skills':self.dfSkills, 'Url': self.dfUrls})
-        df.index += 1    
+        df.index += 1   
 
         writer = pd.ExcelWriter("Applications.xlsx", engine='xlsxwriter')
         df.to_excel(writer, sheet_name='Job Applications', startrow=1, header=False)
@@ -98,23 +130,7 @@ class Excel:
         workbook = writer.book
         worksheet = writer.sheets['Job Applications']
 
-        #header format
-        header_format = workbook.add_format({'bold':True, 'border':1})
-
-        #Column format
-        worksheet.set_column('B:B', 30)
-        worksheet.set_column('C:C', 30)
-        worksheet.set_column('D:D', 30)
-        worksheet.set_column('E:E', 30)
-        worksheet.set_column('F:F', 30)
-
-
-        red_format = workbook.add_format({'bg_color':'red'})
-        worksheet.conditional_format(self.get_df_range(df), {'type': 'text',
-                                        'criteria': 'containing',
-                                        'value':     'Not found',
-                                        'format': red_format})
-        for col, info in enumerate(df.columns.values):
-            worksheet.write(0, col +1, info, header_format)
-
+        #Formats excel
+        self.format(workbook, worksheet, df, 10, 30, 50, '#919190', '#e84a3f')
+        
         writer.save()
