@@ -9,7 +9,7 @@ def main():
 
     xlsx.create()
 
-    #open('Config/Insert.txt', 'w').close() -> Commented out for testing
+    #open('Config/Insert.txt', 'w').close()# -> Commented out for testing
     
     print("Script completed. Good luck job hunting!")
     

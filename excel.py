@@ -1,6 +1,8 @@
 #Pandas xlsxwriter
 import pandas as pd
 
+import matplotlib.pyplot as plt
+
 #Data containers
 import data
 import constants
@@ -105,6 +107,43 @@ class Excel:
         self.dfLocation += data.location
         self.dfSkills += data.skills
         self.dfUrls += data.url
+        
+    def plot_activity(self, df):
+        '''
+        Plots the user's application activity on a line graph
+
+        Parameters:
+            df: The excel dataframe that contains at the minimum a 'Date' series
+
+        Returns:
+            None
+        '''
+        temp = pd.DataFrame({'Date':df['Date']})
+        temp['Date'] = temp['Date'].astype("datetime64")
+        graph = temp.groupby([temp['Date'].dt.year, temp['Date'].dt.month, temp['Date'].dt.day]).count().plot()
+
+        #Graph Labels
+        plt.title("My Application Activity")
+        plt.ylabel('# Of Applications')
+        plt.xlabel('Date')
+        graph.get_legend().remove()
+        plt.savefig('Graphs/Activity.png')
+
+    def plot_companies(self, df):
+        temp = pd.DataFrame({'Company':df['Company']})
+        temp = temp['Company'].value_counts().reset_index().rename(columns={'index': 'Company', 'Company': 'Count'})
+
+        x = temp['Company'].values
+        y = temp['Count'].values
+
+        fig = plt.figure()
+        axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+        axes.set_xlabel("Company")
+        axes.set_ylabel("# Of Applications")
+        axes.set_title("Applications Distribution By Company")
+        
+        axes.bar(x,y)
+        fig.savefig('Graphs/Companies.png')
 
     def create(self)-> None:
         '''
@@ -122,13 +161,19 @@ class Excel:
 
         #Writes to excel
         df = pd.DataFrame({'Date': self.dfDates, 'Job Title': self.dfTitles, 'Company': self.dfCompany, 'Location': self.dfLocation, 'Skills':self.dfSkills, 'Url': self.dfUrls})
-        df.index += 1   
+        df.index += 1
 
         writer = pd.ExcelWriter("Applications.xlsx", engine='xlsxwriter')
         df.to_excel(writer, sheet_name='Job Applications', startrow=1, header=False)
-
+       
         workbook = writer.book
         worksheet = writer.sheets['Job Applications']
+
+
+        #Graphs
+        self.plot_activity(df)
+        self.plot_companies(df)
+
 
         #Formats excel
         self.format(workbook, worksheet, df, 10, 30, 50, '#919190', '#e84a3f')
