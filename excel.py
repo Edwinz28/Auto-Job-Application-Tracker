@@ -108,7 +108,7 @@ class Excel:
         self.dfSkills += data.skills
         self.dfUrls += data.url
         
-    def plot_activity(self, df):
+    def plot_activity(self, df)-> None:
         '''
         Plots the user's application activity on a line graph
 
@@ -129,7 +129,16 @@ class Excel:
         graph.get_legend().remove()
         plt.savefig('Graphs/Activity.png')
 
-    def plot_companies(self, df):
+    def plot_companies(self, df)-> None:
+        '''
+        Plots the user's application distribution by company
+
+        Parameters:
+            df: The excel dataframe that contains at the minimum a 'Company' series
+
+        Returns:
+            None
+        '''
         temp = pd.DataFrame({'Company':df['Company']})
         temp = temp['Company'].value_counts().reset_index().rename(columns={'index': 'Company', 'Company': 'Count'})
 
@@ -141,9 +150,59 @@ class Excel:
         axes.set_xlabel("Company")
         axes.set_ylabel("# Of Applications")
         axes.set_title("Applications Distribution By Company")
-        
+
         axes.bar(x,y)
         fig.savefig('Graphs/Companies.png')
+    
+    def plot_locations(self, df)-> None:
+        '''
+        Plots the user's application distribution by company
+
+        Parameters:
+            df: The excel dataframe that contains at the minimum a 'Company' series
+
+        Returns:
+            None
+        '''
+        temp = pd.DataFrame({'Location':df['Location']})
+        temp = temp['Location'].value_counts().reset_index().rename(columns={'index': 'Location', 'Location': 'Count'})
+
+        x = temp['Location'].values
+        y = temp['Count'].values
+
+        fig = plt.figure()
+        axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+        axes.set_xlabel("Location")
+        axes.set_ylabel("# Of Applications")
+        axes.set_title("Applications Distribution By Job Location")
+
+        axes.bar(x,y)
+        fig.savefig('Graphs/Locations.png')
+
+    def plot_skills_distribution(self, df)-> None:
+        
+        #Creates tally of common skills required
+        def count_skills(skills):
+            skill_list = skills.split()
+            for s in skill_list:
+                data.add_to_skillsDB(s)
+
+        df['Skills'].apply(count_skills)
+
+        x = list()
+        y = list()
+        for key, val in data.skillsDB.items():
+            x.append(key)
+            y.append(val)
+
+        fig = plt.figure()
+        axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+        axes.set_xlabel("Skill")
+        axes.set_ylabel("Count")
+        axes.set_title("Common Skills Required For My Applications")
+
+        axes.bar(x,y)
+        fig.savefig('Graphs/Skills_Distribution.png')
 
     def create(self)-> None:
         '''
@@ -169,11 +228,17 @@ class Excel:
         workbook = writer.book
         worksheet = writer.sheets['Job Applications']
 
-
         #Graphs
         self.plot_activity(df)
         self.plot_companies(df)
+        self.plot_locations(df)
+        self.plot_skills_distribution(df)
 
+
+
+        
+
+        
 
         #Formats excel
         self.format(workbook, worksheet, df, 10, 30, 50, '#919190', '#e84a3f')
